@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <a href="#/a">a应用</a>
+  <a href="#/b">b应用</a>
+
+  <!-- <script src="https://cdn.bootcdn.net/ajax/libs/single-spa/5.9.3/umd/single-spa.min.js"></script> -->
+
+  <script type="module">
+    // 手动实现
+    import { registerApplication, start } from './single-spa.js'
+
+    // let { registerApplication, start } = singleSpa;
+
+    let app1 = {
+      bootstrap: [
+        async (customProps) => {
+          await new Promise(resolve => {
+            setTimeout(() => {
+              console.log('app1 start', customProps)
+              resolve()
+            }, 3000)
+          })
+        },
+        async () => {
+          console.log('app1 start');
+        }
+      ],
+      mount: async (customProps) => {
+        console.log('app1 mount', customProps);
+      },
+      unmount: async (customProps) => {
+        console.log('app1 unmount', customProps);
+      }
+    }
+
+    let app2 = {
+      bootstrap: [
+        async (customProps) => {
+          await new Promise(resolve => {
+            setTimeout(() => {
+              console.log('app2 start', customProps)
+              resolve()
+            }, 3000)
+          })
+        },
+        async () => {
+          console.log('app2 start');
+        }
+      ],
+      mount: async (customProps) => {
+        console.log('app2 mount', customProps);
+      },
+      unmount: async (customProps) => {
+        console.log('app2 unmount', customProps);
+      }
+    }
+
+    const customProps = {name: 'qianbin'};
+
+    registerApplication(
+      'app1',      // 随便取，唯一就行
+      async () => {
+        return app1;
+      },
+      location => {
+        console.log('#/a',location.hash, location.hash == '#/a')
+        return location.hash == '#/a'
+      },     // 路径激活后加载应用
+      customProps      // 自定义属性
+    );
+
+    registerApplication(
+      'app2',      // 随便取，唯一就行
+      async () => {
+        return app2;
+      },
+      location => {
+        console.log('#/b',location.hash, location.hash == '#/b')
+        return location.hash == '#/b'
+      },     // 路径激活后加载应用
+      customProps      // 自定义属性
+    )
+
+    start();
+  </script>
+</body>
+</html>
